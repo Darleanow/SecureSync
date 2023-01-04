@@ -13,7 +13,7 @@ Installation
 
 SecureSync is very simple to install and operate.
 
-``bash
+``
 $ git clone "https://github.com/Darleanow/SecureSync"
 $ cd SecureSync
 $ pip install -r requirements.txt
