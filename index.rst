@@ -5,7 +5,7 @@ What is it about ?
 ------------------
 
 SecureSync is a personal project that I carried out to streamline our work as CyberSecurity Consultants.
-Its purpose is to merge the safety reports into an Excel file containing all the data, similar to a data scrapper.
+Its purpose is to merge CyberSecurity reports into an Excel file containing all the data, similar to a data scrapper.
 It was designed to work with both `PingCastle <https://www.pingcastle.com/>`_ and `Purple Knight <https://www.purple-knight.com/>`_.
 
 Installation
