@@ -14,8 +14,11 @@ Installation
 SecureSync is very simple to install and operate.
 
 ``$ git clone "https://github.com/Darleanow/SecureSync"``
+
 ``$ cd SecureSync``
+
 ``$ pip install -r requirements.txt``
+
 ``$ python3 main.py``
 
 
@@ -23,7 +26,10 @@ Use
 ---
 
 To use SecureSync, just open it.
+
 You will be asked to enter the paths of the reports.
+
 As Purple Knight reports comes out as .pdf files, files, you must convert it to a Word document, please use `Adobe <https://www.adobe.com/fr/acrobat/online/pdf-to-word.html>`_  
 as it's the most accurate one, you might lose data if you use another one.
+
 PLEASE NOTE that providing wrong paths, wrong file extensions may lead to unexpected behavior.
