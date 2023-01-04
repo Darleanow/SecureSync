@@ -28,14 +28,16 @@ ws['A1'] = "Sujet"
 ws['B1'] = "Catégorie"
 ws['C1'] = "Présence Ping Castle"
 ws['D1'] = "Présence Purple Knight"
-ws['E1'] = "Nom Flag Ping Castle"
-ws['F1'] = "Score Ping Castle"
-ws['G1'] = "Score Purple Knight"
-ws['H1'] = "Commentaire"
-ws['I1'] = "Astuce"
-ws["J1"] = "Description Technique"
-ws['K1'] = "Remédiation"
-ws['L1'] = "Documentation"
+ws['E1'] = "Criticité"
+ws['F1'] = "Difficulté de rémédiation"
+ws['G1'] = "Commentaire"
+ws['H1'] = "Nom Flag Ping Castle"
+ws['I1'] = "Score Ping Castle"
+ws['J1'] = "Score Purple Knight"
+ws['K1'] = "Astuce"
+ws["L1"] = "Description Technique"
+ws['M1'] = "Remédiation"
+ws['N1'] = "Documentation"
 
 
 # sets the PingCastle data to the Excel
@@ -52,6 +54,7 @@ def append_pc_data(ping_castle_data):
     # Iterating over it
     for i in range(len(sorted_pc_data[0])):
         number = i + 2
+
         # Subject
         ws.cell(row=number, column=1).value = sorted_pc_data[1][i]
         # Category
@@ -60,37 +63,39 @@ def append_pc_data(ping_castle_data):
         ws.cell(row=number, column=3).value = "Oui"
         # Presence in PurpleKnight
         ws.cell(row=number, column=4).value = "N/a"
-        # Flag Name in PingCastle
-        ws.cell(row=number, column=5).value = sorted_pc_data[3][i]
-        # Score in PingCastle
-        ws.cell(row=number, column=6).value = sorted_pc_data[7][i]
+        # Commentaire
+        ws.cell(row=number, column=7).value = sorted_pc_data[4][i]
+        # Flag name Ping Castle
+        ws.cell(row=number, column=8).value = sorted_pc_data[3][i]
+        # Score Ping Castle
+        ws.cell(row=number, column=9).value = sorted_pc_data[7][i]
         # Score in PurpleKnight
-        ws.cell(row=number, column=7).value = "N/a"
+        ws.cell(row=number, column=10).value = "N/a"
         # Additionnal information
-        ws.cell(row=number, column=8).value = sorted_pc_data[5][i]
+        ws.cell(row=number, column=11).value = sorted_pc_data[2][i]
         # Technical description
-        ws.cell(row=number, column=9).value = sorted_pc_data[2][i]
+        ws.cell(row=number, column=12).value = sorted_pc_data[5][i]
         # How to fix it
-        ws.cell(row=number, column=10).value = sorted_pc_data[1][i]
-        # More information
-        ws.cell(row=number, column=11).value = sorted_pc_data[4][i]
+        ws.cell(row=number, column=13).value = sorted_pc_data[6][i]
+        # Documentation
+        ws.cell(row=number, column=14).value = "\n".join(i for i in sorted_pc_data[-1][i])
 
         # Setting color depending on the score
         if int(sorted_pc_data[7][i]) >= 15:
-            for rows in ws.iter_rows(min_row=number, max_row=number, min_col=0, max_col=13):
+            for rows in ws.iter_rows(min_row=number, max_row=number, min_col=0, max_col=14):
                 # Doing color for every cell in the rows
                 for cell in rows:
                     cell.fill = PatternFill(start_color=red, end_color=red, fill_type="solid")
         elif int(sorted_pc_data[7][i]) >= 10:
-            for rows in ws.iter_rows(min_row=number, max_row=number, min_col=0, max_col=13):
+            for rows in ws.iter_rows(min_row=number, max_row=number, min_col=0, max_col=14):
                 for cell in rows:
                     cell.fill = PatternFill(start_color=orange, end_color=orange, fill_type="solid")
         elif int(sorted_pc_data[7][i]) >= 5:
-            for rows in ws.iter_rows(min_row=number, max_row=number, min_col=0, max_col=13):
+            for rows in ws.iter_rows(min_row=number, max_row=number, min_col=0, max_col=14):
                 for cell in rows:
                     cell.fill = PatternFill(start_color=yellow, end_color=yellow, fill_type="solid")
         else:
-            for rows in ws.iter_rows(min_row=number, max_row=number, min_col=0, max_col=13):
+            for rows in ws.iter_rows(min_row=number, max_row=number, min_col=0, max_col=14):
                 for cell in rows:
                     cell.fill = PatternFill(start_color=green, end_color=green, fill_type="solid")
     # Saving file
@@ -113,6 +118,24 @@ def append_pk_data(purple_knight_data, append_start):
         # Starting at append_start because we don't want to overwrite the pingCastle data
         number = i + 2 + append_start
 
+        """
+        ws['A1'] = "Sujet"
+        ws['B1'] = "Catégorie"
+        ws['C1'] = "Présence Ping Castle"
+        ws['D1'] = "Présence Purple Knight"
+        ws['E1'] = "Criticité"
+        ws['F1'] = "Difficulté de rémédiation"
+        ws['G1'] = "Commentaire"
+        ws['H1'] = "Nom Flag Ping Castle"
+        ws['I1'] = "Score Ping Castle"
+        ws['J1'] = "Score Purple Knight"
+        ws['K1'] = "Astuce"
+        ws["L1"] = "Description Technique"
+        ws['M1'] = "Remédiation"
+        ws['N1'] = "Documentation"
+        """
+        # [cat_name, sub_name, comment, tech_desc, remediation, weight]
+
         # subject
         ws.cell(row=number, column=1).value = sorted_pk_data[1][i]
         # Category
@@ -121,36 +144,38 @@ def append_pk_data(purple_knight_data, append_start):
         ws.cell(row=number, column=3).value = "N/a"
         # PurpleKnight presence
         ws.cell(row=number, column=4).value = "Oui"
-        # Flag Name in PingCastle
-        ws.cell(row=number, column=5).value = "N/a"
+        # Commentaire
+        ws.cell(row=number, column=7).value = sorted_pk_data[2][i]
+        # Flag name in PingCastle
+        ws.cell(row=number, column=8).value = "N/a"
         # Score in PingCastle
-        ws.cell(row=number, column=6).value = "N/a"
-        # Score in PurpleKnight
-        ws.cell(row=number, column=7).value = str(sorted_pk_data[5][i])
-        # Additionnal information
-        ws.cell(row=number, column=8).value = sorted_pk_data[2][i]
-        # Technical description
         ws.cell(row=number, column=9).value = "N/a"
+        # Score in Purple Knight
+        ws.cell(row=number, column=10).value = str(sorted_pk_data[5][i])
+        # Tip is none
+        ws.cell(row=number,column=11).value = "None"
+        # Tech desc
+        ws.cell(row=number, column=12).value = sorted_pk_data[3][i]
         # Redemediation
-        ws.cell(row=number, column=10).value = sorted_pk_data[3][i]
+        ws.cell(row=number, column=13).value = sorted_pk_data[4][i]
         # Documentation
-        ws.cell(row=number, column=11).value = sorted_pk_data[4][i]
+        ws.cell(row=number, column=14).value = "None"
 
         # Setting colors depending on the score
         if int(sorted_pk_data[5][i]) >= 7:
-            for rows in ws.iter_rows(min_row=number, max_row=number, min_col=0, max_col=13):
+            for rows in ws.iter_rows(min_row=number, max_row=number, min_col=0, max_col=14):
                 for cell in rows:
                     cell.fill = PatternFill(start_color=red, end_color=red, fill_type="solid")
         elif int(sorted_pk_data[5][i]) >= 5:
-            for rows in ws.iter_rows(min_row=number, max_row=number, min_col=0, max_col=13):
+            for rows in ws.iter_rows(min_row=number, max_row=number, min_col=0, max_col=14):
                 for cell in rows:
                     cell.fill = PatternFill(start_color=orange, end_color=orange, fill_type="solid")
         elif int(sorted_pk_data[5][i]) >= 3:
-            for rows in ws.iter_rows(min_row=number, max_row=number, min_col=0, max_col=13):
+            for rows in ws.iter_rows(min_row=number, max_row=number, min_col=0, max_col=14):
                 for cell in rows:
                     cell.fill = PatternFill(start_color=yellow, end_color=yellow, fill_type="solid")
         else:
-            for rows in ws.iter_rows(min_row=number, max_row=number, min_col=0, max_col=13):
+            for rows in ws.iter_rows(min_row=number, max_row=number, min_col=0, max_col=14):
                 for cell in rows:
                     cell.fill = PatternFill(start_color=green, end_color=green, fill_type="solid")
     # Saving Excel file
@@ -248,7 +273,7 @@ def extract_data_pc(ping_castle_report):
                     line = f.readline()
                 pc_doc.append(tmp_lst)
             line = f.readline()
-    return [pc_category, pc_id_name, pc_tip, pc_rule_id, pc_desc, pc_tech, pc_solution, pc_score]  # , pc_doc
+    return [pc_category, pc_id_name, pc_tip, pc_rule_id, pc_desc, pc_tech, pc_solution, pc_score, pc_doc]
 
 
 # get the data of the PurpleKnight report
