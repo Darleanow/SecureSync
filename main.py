@@ -1,18 +1,13 @@
 from openpyxl import Workbook
-import docx
-from openpyxl.styles import Font
-import re
+from docx import Document
+from re import compile, sub
 from operator import itemgetter
 from openpyxl.styles import PatternFill
-from openpyxl.styles import Font
-from openpyxl.styles import PatternFill
 from bs4 import BeautifulSoup
-
-# pdf convert
-import pdftotext
+from datetime import datetime
 
 # reg to parse html
-CLEANR = re.compile('<.*?>')
+CLEANR = compile('<.*?>')
 
 # Setting colors for the Excel
 blue = "5abff2"
@@ -34,19 +29,19 @@ ws['B1'] = "Catégorie"
 ws['C1'] = "Présence Ping Castle"
 ws['D1'] = "Présence Purple Knight"
 ws['E1'] = "Nom Flag Ping Castle"
-ws['F1'] = "Nom Flag Purple Knight"
-ws['G1'] = "Score Ping Castle"
-ws['H1'] = "Score Purple Knight"
-ws['I1'] = "Commentaire"
-ws['J1'] = "Astuce"
-ws["K1"] = "Description Technique"
-ws['L1'] = "Remédiation"
-ws['M1'] = "Documentation"
+ws['F1'] = "Score Ping Castle"
+ws['G1'] = "Score Purple Knight"
+ws['H1'] = "Commentaire"
+ws['I1'] = "Astuce"
+ws["J1"] = "Description Technique"
+ws['K1'] = "Remédiation"
+ws['L1'] = "Documentation"
+
 
 # sets the PingCastle data to the Excel
-def append_pc_data(pc_data):
+def append_pc_data(ping_castle_data):
     # first we sort the data by score :
-    cols = list(zip(*pc_data))
+    cols = list(zip(*ping_castle_data))
 
     # Sorting by score
     cols.sort(key=itemgetter(7), reverse=True)
@@ -67,20 +62,18 @@ def append_pc_data(pc_data):
         ws.cell(row=number, column=4).value = "N/a"
         # Flag Name in PingCastle
         ws.cell(row=number, column=5).value = sorted_pc_data[3][i]
-        # Flag Name in PurpleKnight
-        ws.cell(row=number, column=6).value = "N/a"
         # Score in PingCastle
-        ws.cell(row=number, column=7).value = sorted_pc_data[7][i]
+        ws.cell(row=number, column=6).value = sorted_pc_data[7][i]
         # Score in PurpleKnight
-        ws.cell(row=number, column=8).value = "N/a"
+        ws.cell(row=number, column=7).value = "N/a"
         # Additionnal information
-        ws.cell(row=number, column=9).value = sorted_pc_data[4][i]
+        ws.cell(row=number, column=8).value = sorted_pc_data[5][i]
         # Technical description
-        ws.cell(row=number, column=10).value = sorted_pc_data[2][i]
+        ws.cell(row=number, column=9).value = sorted_pc_data[2][i]
         # How to fix it
-        ws.cell(row=number, column=11).value = sorted_pc_data[1][i]
+        ws.cell(row=number, column=10).value = sorted_pc_data[1][i]
         # More information
-        ws.cell(row=number, column=12).value = sorted_pc_data[5][i]
+        ws.cell(row=number, column=11).value = sorted_pc_data[4][i]
 
         # Setting color depending on the score
         if int(sorted_pc_data[7][i]) >= 15:
@@ -101,12 +94,14 @@ def append_pc_data(pc_data):
                 for cell in rows:
                     cell.fill = PatternFill(start_color=green, end_color=green, fill_type="solid")
     # Saving file
-    wb.save("test.xlsx")
+    x = datetime.now()
+    wb.save("excel_report_" + str(x.year) + "-" + str(x.month) + "-" + str(x.day) + ".xlsx")
+
 
 # sets the PurpleKnight data to the Excel
-def append_pk_data(pk_data, append_start):
-    # first we sort the data by score :
-    cols = list(zip(*pk_data))
+def append_pk_data(purple_knight_data, append_start):
+    # deziping list
+    cols = list(zip(*purple_knight_data))
 
     # indexage
     cols.sort(key=itemgetter(5), reverse=True)
@@ -128,20 +123,18 @@ def append_pk_data(pk_data, append_start):
         ws.cell(row=number, column=4).value = "Oui"
         # Flag Name in PingCastle
         ws.cell(row=number, column=5).value = "N/a"
-        # Flag Name in PurpleKnight --> no flag names in PurpleKnight
-        ws.cell(row=number, column=6).value = "N/a"
         # Score in PingCastle
-        ws.cell(row=number, column=7).value = "N/a"
+        ws.cell(row=number, column=6).value = "N/a"
         # Score in PurpleKnight
-        ws.cell(row=number, column=8).value = str(sorted_pk_data[5][i])
+        ws.cell(row=number, column=7).value = str(sorted_pk_data[5][i])
         # Additionnal information
-        ws.cell(row=number, column=9).value = sorted_pk_data[2][i]
+        ws.cell(row=number, column=8).value = sorted_pk_data[2][i]
         # Technical description
-        ws.cell(row=number, column=10).value = "N/a"
+        ws.cell(row=number, column=9).value = "N/a"
         # Redemediation
-        ws.cell(row=number, column=11).value = sorted_pk_data[3][i]
+        ws.cell(row=number, column=10).value = sorted_pk_data[3][i]
         # Documentation
-        ws.cell(row=number, column=12).value = sorted_pk_data[4][i]
+        ws.cell(row=number, column=11).value = sorted_pk_data[4][i]
 
         # Setting colors depending on the score
         if int(sorted_pk_data[5][i]) >= 7:
@@ -161,22 +154,25 @@ def append_pk_data(pk_data, append_start):
                 for cell in rows:
                     cell.fill = PatternFill(start_color=green, end_color=green, fill_type="solid")
     # Saving Excel file
-    wb.save("test.xlsx")
+    x = datetime.now()
+    wb.save("excel_report_" + str(x.year) + "-" + str(x.month) + "-" + str(x.day) + ".xlsx")
 
 
 # Function to remove html tags
 def cleanhtml(raw_html):
-    cleantext = re.sub(CLEANR, '', raw_html)
+    cleantext = sub(CLEANR, '', raw_html)
     return cleantext
+
 
 # Function to get the path of the reports
 def get_files():
-    pc_report_url = input("Location complète du rapport PingCastle (HTML seulement): ")
-    pk_report_url = input("Location complète du rapport PurpleKnight (PDF seulement): ")
-    return [pc_report_url, pk_report_url]
+    ping_castle_path = input("Location complète du rapport PingCastle (HTML seulement): ")
+    purple_knight_path = input("Location complète du rapport PurpleKnight (WORD seulement): ")
+    return [ping_castle_path, purple_knight_path]
+
 
 # Get the data of the PingCastle report
-def extract_data_pc(pc_report_url):
+def extract_data_pc(ping_castle_report):
     # Initializing lists
     pc_category = list()
     pc_id_name = list()
@@ -192,7 +188,7 @@ def extract_data_pc(pc_report_url):
     current_category = "Stale Objects"
 
     # Opening the file
-    with open(pc_report_url, "r", encoding='utf-8') as f:
+    with open(ping_castle_report, "r", encoding='utf-8') as f:
         line = f.readline()
         # While there is data
         while line:
@@ -247,7 +243,6 @@ def extract_data_pc(pc_report_url):
                 tmp_lst = list()
                 while "<a href=" in line:
                     soup = BeautifulSoup(line, "html.parser").find_all(lambda t: t.name == "a")
-                    tmp_tmp_lst = list()
                     tmp_tmp_lst = [a["href"] for a in soup if len(a["href"]) > 10]
                     tmp_lst.append(tmp_tmp_lst[0])
                     line = f.readline()
@@ -255,10 +250,11 @@ def extract_data_pc(pc_report_url):
             line = f.readline()
     return [pc_category, pc_id_name, pc_tip, pc_rule_id, pc_desc, pc_tech, pc_solution, pc_score]  # , pc_doc
 
+
 # get the data of the PurpleKnight report
-def extract_data_pk(pk_report_url):
+def extract_data_pk(pk_report_url_data):
     # Open the Word document
-    document = docx.Document(pk_report_url)
+    document = Document(pk_report_url_data)
 
     # Initializing lists
     sub_name = list()
@@ -268,7 +264,7 @@ def extract_data_pk(pk_report_url):
     tech_desc = list()
     remediation = list()
 
-    # As there is no html in this, set bools for when its needed to change values
+    # As there is no html in this, set bools for when it's needed to change values
     change_subname = False
     change_category = False
     change_weight = False
@@ -292,29 +288,29 @@ def extract_data_pk(pk_report_url):
             change_category = False
         if "CATEGORY" in str(paragraph.text):
             change_category = True
-        if change_weight == True:
+        if change_weight:
             current_weight = str(paragraph.text)
             change_weight = False
         if "WEIGHT" in str(paragraph.text):
             change_weight = True
-        if change_subname == True:
+        if change_subname:
             tmp_str = str(paragraph.text)
             tmp_str = tmp_str.split("IOE Found")
             current_subject = tmp_str[0]
             change_subname = False
         if "SECURITY INDICATOR" in str(paragraph.text):
             change_subname = True
-        if change_comment == True:
+        if change_comment:
             current_comment = str(paragraph.text)
             change_comment = False
         if "Description" in str(paragraph.text):
             change_comment = True
-        if change_tech_desc == True:
+        if change_tech_desc:
             current_tech_desc = str(paragraph.text)
             change_tech_desc = False
         if "Likelihood of Compromise" in str(paragraph.text):
             change_tech_desc = True
-        if change_remediation == True:
+        if change_remediation:
             current_remediation = str(paragraph.text)
             change_remediation = False
         if "Remediation Steps" in str(paragraph.text):
@@ -322,7 +318,6 @@ def extract_data_pk(pk_report_url):
         # if every value is set, append the line
         if len(current_subject) > 0 and len(current_remediation) > 0 and len(current_comment) > 0 and \
                 len(current_weight) > 0 and len(current_tech_desc) > 0:
-
             sub_name.append(current_subject)
             cat_name.append(current_category)
             weight.append(int(current_weight))
